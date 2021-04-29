@@ -1,5 +1,5 @@
 {
-	"authHost": "http://localhost",
+	"authHost": "https://tagihbos.com/",
 	"authEndpoint": "/broadcasting/auth",
 	"clients": [],
 	"database": "redis",
@@ -9,14 +9,14 @@
 			"databasePath": "/database/laravel-echo-server.sqlite"
 		}
 	},
-	"devMode": true,
+	"devMode": false,
 	"host": null,
 	"port": "6001",
-	"protocol": "http",
+	"protocol": "https",
 	"socketio": {},
 	"secureOptions": 67108864,
-	"sslCertPath": "",
-	"sslKeyPath": "",
+	"sslCertPath": "../../../../etc/ssl/certs/tagihbos.crt",
+	"sslKeyPath": "../../../../etc/ssl/certs/tagihbos.key",
 	"sslCertChainPath": "",
 	"sslPassphrase": "",
 	"subscribers": {

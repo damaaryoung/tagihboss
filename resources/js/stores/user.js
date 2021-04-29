@@ -6,7 +6,7 @@ const state = () => ({
     permissions: [],
     role_permission: [],
     authenticated: [],
-    baseUrl: process.env.NODE_ENV == 'production'? "https://example.com" : 'http://localhost:8000'
+    baseUrl: process.env.NODE_ENV == 'production'? "https://tagihbos.com" : 'http://localhost:8000'
 })
 
 const mutations = {
