@@ -58,6 +58,7 @@
                         <div class="tab-pane active" id="tab_1">
                             <template v-for="(row, index) in permissions">
                                 <input type="checkbox"
+                                    name="permissions_new"
                                     class="minimal-red"
                                     :key="index"
                                     :value="row.name"
@@ -173,9 +174,13 @@
             //FUNGSI INI BERJALAN KETIKA TOMBOL SET PERMISSION DITEKAN
             setPermission() {
                 //KIRIM PERMINTAAN KE SERVER
+                const selectedPermissions = new Array();
+                $('input[name="permissions_new"]:checked').each(function() {
+                    selectedPermissions.push({'name' : this.value});
+                });
                 this.setRolePermission({
                     role_id: this.role_selected,
-                    permissions: this.new_permission
+                    permissions: selectedPermissions
                 }).then((res) => {
                     //APABIL BERHASIL
                     if (res.status == 'success') {
