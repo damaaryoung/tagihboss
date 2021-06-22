@@ -132,7 +132,7 @@
                       <i class="fas fa-3x fa-sync-alt fa-spin"></i>
                       <div class="text-bold pt-2">Loading...</div>
                     </div>
-                    <div class="callout callout-info">
+                    <div class="callout callout-info" v-html="info.information">
                       {{(info)?info.information:'Untuk memuat informasi anda harus memilih judul informasi pada kolom pilihan informasi.'}}
                     </div>
                   </div>

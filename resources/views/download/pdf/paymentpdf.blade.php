@@ -168,7 +168,7 @@
                       <tr>
                           <th style="text-align: center;">
                             @if(file_exists(public_path($q->file_ttd_nasabah)))
-                            <img src="{{public_path($q->file_ttd_collection)}}" width="20%" style="text-align: center;">
+                            <img src="{{public_path($q->file_ttd_nasabah)}}" width="20%" style="text-align: center;">
                             @else
                             <p>(tidak ada file ttd nasabah.)</p>
                             @endif

@@ -1,5 +1,5 @@
 {
-	"authHost": "https://tagihbos.com/",
+	"authHost": "https://tagihbos.com",
 	"authEndpoint": "/broadcasting/auth",
 	"clients": [],
 	"database": "redis",
@@ -11,7 +11,7 @@
 	},
 	"devMode": false,
 	"host": null,
-	"port": "6001",
+	"port": "3030",
 	"protocol": "https",
 	"socketio": {},
 	"secureOptions": 67108864,

@@ -35,7 +35,8 @@ export default {
     },
     computed: {
         ...mapState('user', {
-            authenticated: state => state.authenticated
+            authenticated: state => state.authenticated,
+            baseUrl: state => state.baseUrl
         }),
         ...mapGetters(['isAuth']),
       	...mapState(['errors'])
@@ -45,6 +46,17 @@ export default {
         // console.log(e.message);
         this.$toast("Pemberitahuan baru.");
         this.notif = true
+        if (! ('Notification' in window)) {
+            alert('Web Notification is not supported');
+            return;
+          }
+
+          Notification.requestPermission( permission => {
+            let notification = new Notification('New Notifications', {
+              body: "Anda memiliki pemberitahuan baru ! silahkan cek Sistem Tagihbos Sekarang.", // content for the alert
+              icon: 'https://tagihbos.com/storage/tagihbos-transparent.png' // optional image url
+            });
+          });
       })
     },
     methods: {

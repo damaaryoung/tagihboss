@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use App\Models\Notification\NotificationModels;
+use App\Models\Notification\NotificationTo;
 use DB;
 use Auth;
 use App\Models\userRoles;

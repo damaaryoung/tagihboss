@@ -2,10 +2,10 @@
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-warning elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
+    <router-link :to="{name: 'home'}" class="brand-link">
       <img :src="baseUrl+'/storage/tagihbos-transparent.png'" alt="Logo" class="brand-image img-circle " style="opacity: .8" width="100%">
-      <span class="brand-text font-weight-light">TagihBoss V2</span>
-    </a>
+      <span class="brand-text font-weight-light">TagihBoss</span>
+    </router-link>
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -21,6 +21,13 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <li class="nav-item">
+            <router-link :to="{ name: 'home' }" class="nav-link">
+              <i class="nav-icon fas fa-home"></i>
+                Home
+              </router-link>
+            </a>
+          </li>
           <li class="nav-item" v-if="$can('setting-list')">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-tools"></i>
@@ -81,7 +88,7 @@
               </li>
             </ul>
             <ul class="nav nav-treeview">
-              <li class="nav-item"  v-if="$can('user-list')">
+              <li class="nav-item"  v-if="$can('payment-list')">
                 <router-link :to="{ name: 'payment.data' }" class="nav-link"><i class="fas fa-coins nav-icon"></i> Masters Payments</router-link>
               </li>
             </ul>

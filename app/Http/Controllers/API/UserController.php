@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserCollection;
@@ -40,12 +41,90 @@ class UserController extends Controller
             $loginType => request('email'),
             'password' => request('password')
         ];
-        if(Auth::attempt($login)){
-            $user = Auth::user();
-            return response()->json(['token' => $user->createToken('nApp')->accessToken], $this->successStatus);
-        }
-        else{
-            return response()->json(['token'=>'Unauthorised'], 401);
+        $cek=User::where($login)->count();
+        if ($cek > 0) {
+          if(Auth::attempt($login)){
+              $user = Auth::user();
+              return response()->json(['token' => $user->createToken('nApp')->accessToken], $this->successStatus);
+          }
+        }else{
+          // START API MICRO BPR ONLINE
+              $client=new Client();
+              try {
+                  $request = $client->request('POST', 'http://103.31.232.146/API_ABSENSI/login',['form_params' => [
+                      'user' => request('email'),
+                      'password' => request('password')
+                  ]]);
+                  $status = $request->getStatusCode();
+                  if($status == 200){
+                      $api=$request->getBody()->getContents();
+                      $data=json_decode($api,true);
+                      $user_id=$data['payload']['id'];
+                      $email=$data['payload']['email'];
+                      $username=$data['payload']['usename'];
+                      $lastValue = User::orderBy('id', 'desc')->first();
+                      $nik=$data['payload']['nik'];
+                      $nama=$data['payload']['nama'];
+                      $divisi=$data['payload']['divisi_id'];
+                      $jabatan=$data['payload']['jabatan'];
+                      $email=$data['payload']['email'];
+                      $id_lokasi=$data['user']['id_lokasi'];
+                      $jam_masuk=$data['user']['jam_masuk'];
+                      $jam_keluar=$data['user']['jam_keluar'];
+                      $initial=$data['user']['initial'];
+
+                      $credentials = [
+                          'name'=>$username,
+                          'email'=>$email
+                      ];
+
+                      $cek=User::where($credentials)->count();
+                      if ($cek < 1) {
+                          $user=user::create([
+                            'user_id'=>$user_id,
+                            'location'=>$id_lokasi,
+                            'nik'=>$nik,
+                            'name'=>$username,
+                            'email'=>$email,
+                            'password'=>Hash::make(request('password'))
+                          ]);
+                          $user->assignRole('Field Collections');
+                          $login = [
+                              'name' => request('email'),
+                              'password' => request('password')
+                          ];
+                          if (auth()->attempt($login)) {
+                            $user = Auth::user();
+                            return response()->json(['token' => $user->createToken('nApp')->accessToken], $this->successStatus);
+                          }
+                      }else{
+                          $user=user::where($credentials)->update([
+                              'user_id'=>$user_id,
+                              'location'=>$id_lokasi,
+                              'nik'=>$nik,
+                              'name'=>$username,
+                              'email'=>$email,
+                              'password'=>Hash::make(request('password'))
+                          ]);
+                          $login = [
+                              'name' => request('email'),
+                              'password' => request('password')
+                          ];
+                          if (auth()->attempt($login)) {
+                            $user = Auth::user();
+                            return response()->json(['token' => $user->createToken('nApp')->accessToken], $this->successStatus);
+                          }
+                      }
+                  }else{
+                      // throw new \Exception('Failed');
+                      return response()->json(['token'=>'Unauthorised'], 401);
+                  }
+              } catch (\GuzzleHttp\Exception\ConnectException $e) {
+                  return $e->getResponse()->getStatusCode();
+              } catch (\GuzzleHttp\Exception\ClientException $e) {
+                  return $e->getResponse()->getStatusCode();
+              }
+          // END API MICRO BPR ONLINE
         }
     }
 

@@ -80,7 +80,7 @@ class AssigmentController extends Controller
             ->orWhere('ft_hari', 'like', '%' .request()->q. '%');
         }
       }
-      return new AssigmentCollection($x->paginate(10));
+      return new AssigmentCollection($x->paginate(20));
     }
 
     /**
@@ -107,6 +107,9 @@ class AssigmentController extends Controller
     {
       date_default_timezone_set('Asia/Jakarta');
       $input=$request->all();
+	  
+	 // var_dump($request->file('take_foto')->getClientMimeType());
+	 // die;
       $this->validate($request, [
         "task_code" => 'required|numeric',
         "kunjungan_ke" => 'required|numeric',
@@ -118,81 +121,82 @@ class AssigmentController extends Controller
         "janji_byr" => 'required|string',
         "case_category" => 'required|string',
         "next_action" => 'required|string',
-        "take_foto" => 'required|image|mimes:jpeg,png,jpg|max:2048'
+        "take_foto" => "required|image|mimes:jpeg,png,jpg"
       ]);
       if ($input['janji_byr']=="N") {
         $tjb=null;
-      }else{
+      }else {
         $days = (strtotime($input['tgl_janji_byr']) - strtotime(date('Y-m-d'))) / (60 * 60 * 24);
         if ($days >= 7 || date('m',strtotime($input['tgl_janji_byr'])) !== date('m')) {
           return response()->json([""=>422,"message"=>"The given data was invalid.","errors"=>["tgl_janji_byr"=>["tanggal janji bayar harus dalam bulan ini dan tidak boleh melebihi 7 hari"]]], 422);
-        }else{
-          $tjb=$input['tgl_janji_byr'];
-          $cx=ViewTaskAssigment::where('task_code',$request->task_code)->first();
-          if ($cx->status_activity != 0) {
-            return response()->json(['status' => 'danger','message'=>'You can only make payments after creating an activity for this customer!'], 200);
-          }else{
-            $path = storage_path('app/public/img/activity/'.date('F-Y'));
-            $folderName = public_path('img/activity/'.date('F-Y'));
-            if (!file_exists($path)||!file_exists($folderName)) {
-                mkdir($path,0777);
-                mkdir($folderName,0777);
-            }
-            $safeName = time().'-activity-'.$input['task_code'].'.'.'png';
-            $file_path_storage = $request->file('take_foto')->storeAs('img/activity/'.date('F-Y'), $safeName, 'public');
-            $filestorage= $file_path_storage;
-            $request->file('take_foto')->move($folderName, $safeName);
-              $dataPost=[
-                'task_code'=>$input['task_code'],
-                'kunjungan_ke'=>$input['kunjungan_ke'],
-                'bertemu'=>$input['bertemu'],
-                'karakter_debitur'=>$input['karakter_debitur'],
-                'total_penghasilan'=>$input['total_penghasilan'],
-                'kondisi_pekerjaan'=>$input['kondisi_pekerjaan'],
-                'asset_debt'=>$input['asset_debt'],
-                'janji_byr'=>$input['janji_byr'],
-                'tgl_janji_byr'=>$tjb,
-                'case_category'=>$input['case_category'],
-                'next_action'=>$input['next_action'],
-                'keterangan'=>$input['keterangan'],
-                'file'=>$filestorage,
-                'invalid_no'=>$input['invalid_no'],
-              ];
-            ActivityAssigment::create($dataPost);
-            $v=ViewTaskAssigment::where('task_code',$request->task_code)->first();
-            $stat_act=($v->status_activity == 0) ? true : false;
-            $stat_vst=($v->status_visit == 0) ? true : false;
-            $stat_pym=($v->status_payment == 0) ? true : false;
-            $act=[
-              'stat_act'=>$stat_act,
-              'stat_vst'=>$stat_vst,
-              'stat_pym'=>$stat_pym
-            ];
-            // Notif
-            $f=ViewTaskAssigment::where('task_code',$input['task_code'])->first();
-            $this->event(
-              'User dengan akun username: '.Auth::user()->name.' telah menambahkan activity baru dengan task_code: '.$input['task_code'].' pada tab activity yang terdapat pada menu task assigment.',
-              ucfirst(strtolower(Auth::user()->name)).' telah menambahkan activity baru dengan no pengajuan : '.$f->no_rekening.'.',
-              'activity',
-              'activity',
-              'store',
-              'Y',
-              $request->ip()
-            );
-            // Notif
-            return response()->json(['status' => 'success','message'=>'created data activity is successfuly','act'=>$act], 200);
-          }
         }
+        $tjb=$input['tgl_janji_byr'];
+      }
+      $cx=ViewTaskAssigment::where('task_code',$request->task_code)->first();
+      if ($cx->status_activity != 0) {
+        return response()->json(['status' => 'danger','message'=>'You can only make payments after creating an activity for this customer!'], 200);
+      }else{
+        $path = storage_path('app/public/img/activity/'.date('F-Y'));
+        $folderName = public_path('img/activity/'.date('F-Y'));
+        if (!file_exists($path)||!file_exists($folderName)) {
+            mkdir($path,0777);
+            mkdir($folderName,0777);
+        }
+        $safeName = time().'-activity-'.$input['task_code'].'.'.'png';
+        $file_path_storage = $request->file('take_foto')->storeAs('img/activity/'.date('F-Y'), $safeName, 'public');
+        $filestorage= $file_path_storage;
+        $request->file('take_foto')->move($folderName, $safeName);
+          $dataPost=[
+            'task_code'=>$input['task_code'],
+            'kunjungan_ke'=>$input['kunjungan_ke'],
+            'bertemu'=>$input['bertemu'],
+            'karakter_debitur'=>$input['karakter_debitur'],
+            'total_penghasilan'=>$input['total_penghasilan'],
+            'kondisi_pekerjaan'=>$input['kondisi_pekerjaan'],
+            'asset_debt'=>$input['asset_debt'],
+            'janji_byr'=>$input['janji_byr'],
+            'tgl_janji_byr'=>$tjb,
+            'case_category'=>$input['case_category'],
+            'next_action'=>$input['next_action'],
+            'keterangan'=>$input['keterangan'],
+            'file'=>$filestorage,
+            'invalid_no'=>$input['invalid_no'],
+          ];
+        ActivityAssigment::create($dataPost);
+        $v=ViewTaskAssigment::where('task_code',$request->task_code)->first();
+        $stat_act=($v->status_activity == 0) ? true : false;
+        $stat_vst=($v->status_visit == 0) ? true : false;
+        $stat_pym=($v->status_payment == 0) ? true : false;
+        $act=[
+          'stat_act'=>$stat_act,
+          'stat_vst'=>$stat_vst,
+          'stat_pym'=>$stat_pym
+        ];
+        // Notif
+        $f=ViewTaskAssigment::where('task_code',$input['task_code'])->first();
+        $this->event(
+          'User dengan akun username: '.Auth::user()->name.' telah menambahkan activity baru dengan task_code: '.$input['task_code'].' pada tab activity yang terdapat pada menu task assigment.',
+          ucfirst(strtolower(Auth::user()->name)).' telah menambahkan activity baru dengan no pengajuan : '.$f->no_rekening.'.',
+          'activity',
+          'activity',
+          'store',
+          'Y',
+          $request->ip()
+        );
+        // Notif
+        return response()->json(['status' => 'success','message'=>'created data activity is successfuly','act'=>$act], 200);
       }
     }
     public function assigmentVisitAStore(Request $request)
     {
+	//	var_dump($request->file('imageTempatTinggal1')->getClientMimeType());
+	//	die;
       $this->validate($request, [
         "task_code" => "required|numeric",
         "kondisi_tempat_tinggal" => "required|string",
         "latitude_tempat_tinggal" => "required|string",
         "longitude_tempat_tinggal" => "required|string",
-        "imageTempatTinggal1" => "required|image|mimes:jpeg,png,jpg|max:2048"
+        "imageTempatTinggal1" => 'required|image|mimes:jpeg,png,jpg'
       ]);
       $input=$request->all();
       $cx=ViewTaskAssigment::where('task_code',$request->task_code)->first();
@@ -209,6 +213,7 @@ class AssigmentController extends Controller
         $file_path_storage1 = $request->file('imageTempatTinggal1')->storeAs('img/visit/'.date('F-Y'), $safeName1, 'public');
         $filestorage1= $file_path_storage1;
         $request->file('imageTempatTinggal1')->move($folderName, $safeName1);
+		
         $stored=VisitTempatTinggal::create([
             'task_code' => $input['task_code'],
             'kondisi_tempat' => $input['kondisi_tempat_tinggal'],
@@ -247,7 +252,7 @@ class AssigmentController extends Controller
         "kondisi_jaminan" => "required|string",
         "latitude_jaminan" => "required|string",
         "longitude_jaminan" => "required|string",
-        "imageJaminan1" => "required|image|mimes:jpeg,png,jpg|max:2048"
+        "imageJaminan1" => "required|image|mimes:jpeg,png,jpg"
       ]);
       $input=$request->all();
       $cx=ViewTaskAssigment::where('task_code',$request->task_code)->first();
@@ -315,7 +320,7 @@ class AssigmentController extends Controller
         "sisa_angsuran" => "required|numeric",
         "sisa_denda" => "required|numeric",
         "tgl_jt" => "required|date_format:Y-m-d",
-        "take_foto" => "required|image|mimes:jpeg,png,jpg|max:2048",
+        "take_foto" => "required|image|mimes:jpeg,png,jpg",
         "signature64Nasabah" => "required|string",
         "signature64Collection" => "required|string"
       ]);
@@ -490,6 +495,7 @@ class AssigmentController extends Controller
         'imageTempatTinggal2'=>"",
         'imageTempatTinggal3'=>""
       ];
+	
       $v_b=[
         'task_code'=>$v->task_code,
         'kondisi_jaminan'=>"",

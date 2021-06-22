@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Assigments\PaymentAssigment;
 use App\Http\Resources\ApiCollection;
+use App\Models\Notification\NotificationModels;
+use App\Models\Notification\NotificationTo;
 use PDF;
 use Auth;
 use App\Models\userRoles;
 use App\User;
 use Browser;
 use App\File;
-use App\Events\ListingViewed;
 use App\Events\EveryoneEvent;
 use App\Notifications\Assigment;
 use Notification;
@@ -102,7 +103,7 @@ class PaymentController extends Controller
         ];
         return response()->json($data, 200);
     }
-    public function print($id)
+    public function print(Request $request, $id)
     {
       $q=PaymentAssigment::find($id);
       $q['auth']=Auth::user()->name;

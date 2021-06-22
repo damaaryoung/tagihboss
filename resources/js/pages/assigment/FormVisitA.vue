@@ -39,7 +39,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="basic-addon1"><i class="fas fa-map-marked-alt"></i></span>
                 </div>
-                <input type="text" class="form-control" v-model="visit_a.latitude_tempat_tinggal" readonly>
+                <input type="text" class="form-control" v-model="visit_a.latitude_tempat_tinggal" placeholder="enter name users..." readonly>
               </div>
               <p class="text-danger" v-if="errors.latitude_tempat_tinggal">{{ errors.latitude_tempat_tinggal[0] }}</p>
           </div>
