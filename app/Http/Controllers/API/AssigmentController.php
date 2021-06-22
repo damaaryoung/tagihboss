@@ -44,9 +44,9 @@ class AssigmentController extends Controller
         $x = ViewTaskAssigment::where(['user_id'=>Auth::user()->user_id, 'flag_aktif'=>1])->orderBy('task_code', 'DESC');
         if (request()->q != '') {
             $x = $x->where([
-              'user_id'=>Auth::user()->user_id,
-              'flag_aktif'=>1,
-              'task_code'=> 'like', '%' .request()->q. '%'
+              ['user_id', Auth::user()->user_id],
+              ['flag_aktif', 1],
+              ['task_code',  'like', '%' .request()->q. '%']
               ])
             ->orWhere('no_rekening', 'like', '%' .request()->q. '%')
             ->orWhere('nama_nasabah', 'like', '%' .request()->q. '%')

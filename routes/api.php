@@ -55,4 +55,5 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::get('/help-support', 'API\DocumentationController@help');
 	Route::get('/help-support-pick/{id}', 'API\DocumentationController@helpPick');
 	Route::get('/print/{id}', 'API\PaymentController@print');
+	Route::get('/getInfo/{id}', 'API\InfoCollectionController@getInfo');
 });

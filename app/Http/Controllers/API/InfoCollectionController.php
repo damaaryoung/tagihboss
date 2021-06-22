@@ -44,7 +44,7 @@ class InfoCollectionController extends Controller
     }
     public function titleInfocoll()
     {
-      return response()->json(InfocollModels::get(), 200);
+      return response()->json(InfocollModels::where('state', '=' ,'active')->get(), 200);
     }
 
     /**
@@ -227,4 +227,15 @@ class InfoCollectionController extends Controller
       }
     }
     // function recording
+    public function getInfo($id)
+    {
+      $x=InfocollModels::find($id);
+      $data=[
+        'title'=>$x->title,
+        'slug'=>$x->slug,
+        'information'=>$x->information,
+        'state'=>$x->state
+      ];
+      return response()->json($data, 200);
+    }
 }

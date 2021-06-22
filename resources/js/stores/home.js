@@ -69,7 +69,7 @@ const actions = {
     getInfo({ commit, state }, payload) {
       commit('SET_LOADINGINFO', true)
       return new Promise((resolve, reject) => {
-          $axios.get(`/infocoll/${payload}/edit`)
+            $axios.get(`/getInfo/${payload}`)
           .then((response) => {
               commit('SET_LOADINGINFO', false)
               commit('ASSIGN_INFO', response.data)
