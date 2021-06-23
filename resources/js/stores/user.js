@@ -105,13 +105,15 @@ const actions = {
             })
             .catch((error) => {
                 if (error.response.status == 401) {
-                  var r = confirm("Invalid Token! please try after relogin.");
-                  if (r == true) {
-                    alert('clear cache browser and relogin.')
-                  } else {
-                    alert('clear cache browser and relogin.')
+                    var r = confirm("Invalid Token! please try after relogin.");
+                    if (r == true) {
+                      localStorage.clear();
+                      window.location = 'login';
+                    } else {
+                      localStorage.clear();
+                      window.location = 'login';
+                    }
                   }
-                }
             })
         })
     }

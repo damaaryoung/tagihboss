@@ -19,15 +19,27 @@
           margin-bottom: 3px;
           margin-left: -56px !important;
           z-index: 1000 !important;">
-            <span class="fas fa-user"></span>
+            <span class="fas fa-user" style="width: 100%"></span>
           </div>
         </div>
         <p class="text-danger" v-if="errors.email">{{ errors.email[0] }}</p>
       </div>
       <div class="input-group mb-3 has-feedback" :class="{'has-error': errors.password}">
-        <input type="password" class="form-control" placeholder="Password" v-model="data.password"
+        <input type="password" id="password" class="form-control" placeholder="Password" v-model="data.password"
         style="border-radius: 3rem; background-color: #ffce2d !important; height:60px;">
         <div class="input-group-append">
+          <div class="input-group-text" style="background-color: white; border: none;">
+            <i class="fas fa-eye-slash"  @click="togglePassword" id="showPassword" style="
+          cursor: pointer;
+          color: gray;
+          width: 10px;
+          height: 10px;
+          margin-top: 3px;
+          margin-right: 3px;
+          margin-bottom: 3px;
+          margin-left: -91px !important;
+          z-index: 1000 !important;"></i>
+          </div>
           <div class="input-group-text" style="border-radius: 3.25rem;
           background-color: rgb(255, 255, 255);
           width: 54px;
@@ -35,9 +47,9 @@
           margin-top: 3px;
           margin-right: 3px;
           margin-bottom: 3px;
-          margin-left: -56px !important;
+          margin-left: -80px !important;
           z-index: 1000 !important;">
-            <span class="fas fa-lock"></span>
+            <span class="fas fa-lock" style="width: 100%"></span>
           </div>
         </div>
         <p class="text-danger" v-if="errors.password">{{ errors.password[0] }}</p>
@@ -96,6 +108,18 @@ export default {
                     // location.reload()
                 }
             })
+        },
+        togglePassword () {
+          const passwordField = document.querySelector('#password');
+          // if (passwordField.getAttribute('type') === 'password') passwordField.setAttribute('type', 'text')
+          // else passwordField.setAttribute('type', 'password')
+          const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+          password.setAttribute('type', type);
+          if(type == 'text') {
+            $('#showPassword').removeClass('fas fa-eye-slash').addClass('fas fa-eye');
+          } else {
+            $('#showPassword').removeClass('fas fa-eye').addClass('fas fa-eye-slash');
+          }
         }
     }
 }

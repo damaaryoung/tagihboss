@@ -42,10 +42,13 @@ class UserController extends Controller
             'password' => request('password')
         ];
         $cek=User::where($login)->count();
+        // dd($cek);
         if ($cek > 0) {
           if(Auth::attempt($login)){
               $user = Auth::user();
               return response()->json(['token' => $user->createToken('nApp')->accessToken], $this->successStatus);
+          } else {
+            return response()->json(['token'=>'Unauthorised'], 201);
           }
         }else{
           // START API MICRO BPR ONLINE
@@ -113,15 +116,20 @@ class UserController extends Controller
                           if (auth()->attempt($login)) {
                             $user = Auth::user();
                             return response()->json(['token' => $user->createToken('nApp')->accessToken], $this->successStatus);
+                          } else {
+                            return response()->json(['token'=>'Unauthorised'], 201);
                           }
                       }
                   }else{
                       // throw new \Exception('Failed');
-                      return response()->json(['token'=>'Unauthorised'], 401);
+                      return response()->json(['token'=>'Unauthorised'], 201);
                   }
               } catch (\GuzzleHttp\Exception\ConnectException $e) {
                   return $e->getResponse()->getStatusCode();
               } catch (\GuzzleHttp\Exception\ClientException $e) {
+                  if($e->getResponse()->getStatusCode() == 401) {
+                    return response()->json(['token'=>'Unauthorised'], 201);
+                  }
                   return $e->getResponse()->getStatusCode();
               }
           // END API MICRO BPR ONLINE
