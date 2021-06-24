@@ -321,10 +321,11 @@ class AssigmentController extends Controller
         "sisa_denda" => "required|numeric",
         "tgl_jt" => "required|date_format:Y-m-d",
         "take_foto" => "required|image|mimes:jpeg,png,jpg",
-        "signature64Nasabah" => "required|string",
+        // "signature64Nasabah" => "required|string",
         "signature64Collection" => "required|string"
       ]);
       $input=$request->all();
+      $TtdNasabah = ($request->signature64Nasabah == null ? false:true);
       $cx=ViewTaskAssigment::where('task_code',$request->task_code)->first();
       if ($cx->status_activity == 0) {
         return response()->json(['status' => 'danger','message'=>'You can only make payments after creating an activity for this customer!'], 200);
@@ -347,13 +348,24 @@ class AssigmentController extends Controller
         $safeNameCOL = time().'-payment-signature-collection-'.$input['task_code'].'.'.'png';
         // storage
         $file_path_pic = $request->file('take_foto')->storeAs('img/payment/pic/'.date('F-Y'), $safeName, 'public');
-        file_put_contents(storage_path().'/app/public/img/payment/signature/'.date('F-Y').'/'.time().'-payment-signature-nasabah-'.$input['task_code'].'.'.'png', $fileSignatureNasabah);
+
+        if($TtdNasabah) {
+          file_put_contents(storage_path().'/app/public/img/payment/signature/'.date('F-Y').'/'.time().'-payment-signature-nasabah-'.$input['task_code'].'.'.'png', $fileSignatureNasabah);
+        }
         file_put_contents(storage_path().'/app/public/img/payment/signature/'.date('F-Y').'/'.time().'-payment-signature-collection-'.$input['task_code'].'.'.'png', $fileSignatureCollection);
         $file->move($P_folderName, $safeName);
-        file_put_contents(public_path().'/img/payment/signature/'.date('F-Y').'/'.$safeNameSN, $fileSignatureNasabah);
+
+        if($TtdNasabah) {
+          file_put_contents(public_path().'/img/payment/signature/'.date('F-Y').'/'.$safeNameSN, $fileSignatureNasabah);
+        }
+        
         file_put_contents(public_path().'/img/payment/signature/'.date('F-Y').'/'.$safeNameCOL, $fileSignatureCollection);
         $filestorage1= $file_path_pic;
-        $filestorage2= 'img/payment/signature/'.date('F-Y').'/'.$safeNameSN;
+        if($TtdNasabah) {
+          $filestorage2= 'img/payment/signature/'.date('F-Y').'/'.$safeNameSN;
+        } else {
+          $filestorage2= null;
+        }
         $filestorage3= 'img/payment/signature/'.date('F-Y').'/'.$safeNameCOL;
         PaymentAssigment::create([
             'task_code'=>$input['task_code'],
