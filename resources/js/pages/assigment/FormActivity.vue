@@ -38,6 +38,7 @@
       							<option value="keluarga">Keluarga</option>
       							<option value="tetangga">Tetangga</option>
       							<option value="orang lain">Orang lain</option>
+      							<option value="debitur tidak ditempat">Debitur Tidak ditempat</option>
       						</select>
                 </div>
                 <p class="text-danger" v-if="errors.bertemu">{{ errors.bertemu[0] }}</p>
